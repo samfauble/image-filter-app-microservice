@@ -1,0 +1,6 @@
+language: minimal
+services: docker
+env: 
+    - DOCKER_COMPOSE_VERSION=1.25.4
+install:
+    - docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml

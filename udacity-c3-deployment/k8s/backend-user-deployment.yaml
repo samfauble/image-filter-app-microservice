@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: backend-user
+  name: backend-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: backend-user
+  template:
+    metadata:
+      labels:
+        service: backend-user
+    spec:
+      containers:
+      - image: scheele/udacity-restapi-user
+        name: backend-user 
+        imagePullPolicy: Always  
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"      
+        env:
+        - name: URL
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap
+              key: URL 
+        - name: JWT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap
+              key: JWT_SECRET
+        - name: POSTGRESS_DB
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap
+              key: POSTGRESS_DB
+        - name: POSTGRESS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap
+              key: POSTGRESS_HOST
+        - name: password
+          valueFrom:
+            configMapKeyRef:
+              name: env-secret
+              key: password
+        - name: username
+          valueFrom:
+            configMapKeyRef:
+              name: env-secret
+              key: username
+      restartPolicy: Always
+
+

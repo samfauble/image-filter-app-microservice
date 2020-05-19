@@ -1,0 +1,40 @@
+version: "3"
+services:
+  reverseproxy:
+      image: scheele/reverseproxy
+      ports:
+          - 8080:8080
+      restart: always
+      depends_on:
+        - backend-user
+        - backend-feed     
+  backend-user:
+    image: scheele/udacity-restapi-user
+    environment:
+      POSTGRESS_USERNAME: env.process.POSTGRESS_USERNAME
+      POSTGRESS_PASSWORD: env.process.POSTGRESS_PASSWORD 
+      POSTGRESS_DB: env.process.POSTGRESS_DB 
+      POSTGRESS_HOST: env.process.POSTGRESS_HOST 
+      AWS_REGION: env.process.AWS_REGION 
+      AWS_PROFILE: env.process.AWS_PROFILE 
+      AWS_BUCKET: env.process.AWS_BUCKET
+      JWT_SECRET: env.process.JWT_SECRET
+      URL: "http://localhost:8100"
+  backend-feed:
+    image: scheele/udacity-restapi-feed
+    volumes:
+      - $HOME/.aws:/root/.aws
+    environment:
+      POSTGRESS_USERNAME: env.process.POSTGRESS_USERNAME
+      POSTGRESS_PASSWORD: env.process.POSTGRESS_PASSWORD 
+      POSTGRESS_DB: env.process.POSTGRESS_DB 
+      POSTGRESS_HOST: env.process.POSTGRESS_HOST 
+      AWS_REGION: env.process.AWS_REGION 
+      AWS_PROFILE: env.process.AWS_PROFILE 
+      AWS_BUCKET: env.process.AWS_BUCKET
+      JWT_SECRET: env.process.JWT_SECRET
+      URL: "http://localhost:8100"
+  frontend:
+    image: scheele/udacity-frontend:local
+    ports:
+      - "8100:80"
